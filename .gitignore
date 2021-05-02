@@ -1,0 +1,7 @@
+.idea/workspace.xml
+.idea/jarRepositories.xml
+.idea/encodings.xml
+FoodOrderingApp-api/target/
+FoodOrderingApp-api/FoodOrderingApp-api.iml
+FoodOrderingApp-db/target/
+FoodOrderingApp-service/target/
