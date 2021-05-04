@@ -5,3 +5,5 @@ FoodOrderingApp-api/target/
 FoodOrderingApp-api/FoodOrderingApp-api.iml
 FoodOrderingApp-db/target/
 FoodOrderingApp-service/target/
+.idea/
+FoodOrderingApp-service/FoodOrderingApp-service.iml
