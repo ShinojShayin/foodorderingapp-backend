@@ -13,7 +13,7 @@ public class UtilityProvider {
     };
 
     public static  Predicate<String> isValidMobileNumber = (mobno) ->{
-        Pattern mobileNoPatter = Pattern.compile("(0/91)?[7-9][0-9]{9}");
+        Pattern mobileNoPatter = Pattern.compile("[0-9]{10}");
         Matcher matcher = mobileNoPatter.matcher(mobno);
         return (matcher.find() &&
                 matcher.group().equals(mobno));

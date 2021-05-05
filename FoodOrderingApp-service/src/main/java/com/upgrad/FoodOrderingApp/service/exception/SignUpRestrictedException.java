@@ -13,7 +13,7 @@ public class SignUpRestrictedException extends Exception {
     private final String code;
     private final String errorMessage;
 
-    public SignUpRestrictedException(SignupErrorCode errorCode) {
+    public SignUpRestrictedException(final SignupErrorCode errorCode) {
         this.code = errorCode.getCode();
         this.errorMessage = errorCode.getDefaultMessage();
     }

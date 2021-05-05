@@ -12,7 +12,7 @@ public class AuthenticationFailedException extends Exception {
     private final String code;
     private final String errorMessage;
 
-    public AuthenticationFailedException(AuthenticationErrorCode errorCode) {
+    public AuthenticationFailedException(final AuthenticationErrorCode errorCode) {
         this.code = errorCode.getCode();
         this.errorMessage = errorCode.getDefaultMessage();
     }

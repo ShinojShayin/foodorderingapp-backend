@@ -2,12 +2,14 @@ package com.upgrad.FoodOrderingApp.service.businness;
 
 import com.upgrad.FoodOrderingApp.service.common.AuthenticationErrorCode;
 import com.upgrad.FoodOrderingApp.service.common.SignupErrorCode;
+import com.upgrad.FoodOrderingApp.service.common.UpdateCustomerErrorCode;
 import com.upgrad.FoodOrderingApp.service.dao.CustomerAuthDao;
 import com.upgrad.FoodOrderingApp.service.dao.CustomerDao;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
+import com.upgrad.FoodOrderingApp.service.exception.UpdateCustomerException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,8 @@ public class CustomerService {
 
     @Autowired
     PasswordCryptographyProvider passwordCryptographyProvider;
-    public void customerSignupValidation(CustomerEntity reqCustomerEntity) throws SignUpRestrictedException {
+
+    public void validateCustomerSignup(CustomerEntity reqCustomerEntity) throws SignUpRestrictedException {
 
         if (StringUtils.isEmpty(reqCustomerEntity.getContactNumber()) ||
                 StringUtils.isEmpty(reqCustomerEntity.getEmail()) ||
@@ -65,7 +68,7 @@ public class CustomerService {
         return customerDao.createCustomer(reqCustomerEntity);
     }
 
-    public String[] evaluateAuthorizationHeader(String authorization) throws AuthenticationFailedException {
+    public String[] validateLoginAuthorizationHeader(String authorization) throws AuthenticationFailedException {
 
         String[] credential = null;
 
@@ -102,7 +105,7 @@ public class CustomerService {
             customerAuthEntity.setCustomer(existingCustomer);
 
             final ZonedDateTime now = ZonedDateTime.now();
-            final ZonedDateTime expiresAt = now.plusHours(2);
+            final ZonedDateTime expiresAt = now.plusHours(8);
 
             customerAuthEntity.setAccessToken(jwtTokenProvider.generateToken(existingCustomer.getUuid(), now, expiresAt));
             customerAuthEntity.setLoginAt(now);
@@ -116,5 +119,19 @@ public class CustomerService {
             throw new AuthenticationFailedException(AuthenticationErrorCode.ATH_002);
         }
 
+    }
+
+    public void validateUpdateCustomer(CustomerEntity customerEntityReq) throws UpdateCustomerException {
+        if(StringUtils.isEmpty(customerEntityReq.getFirstName()))
+            throw new UpdateCustomerException(UpdateCustomerErrorCode.UCR_002);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public CustomerEntity updateCustomerEntity(CustomerEntity customerEntityReq){
+        CustomerEntity existingCustomer = customerDao.getCustomerByUuid(customerEntityReq.getUuid());
+        existingCustomer.setFirstName(customerEntityReq.getFirstName());
+        existingCustomer.setLastName(customerEntityReq.getLastName());
+        CustomerEntity customerEntityResp = customerDao.updateCustomer(existingCustomer);
+        return customerEntityResp;
     }
 }

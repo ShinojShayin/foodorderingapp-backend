@@ -1,5 +1,7 @@
 package com.upgrad.FoodOrderingApp.service.exception;
 
+import com.upgrad.FoodOrderingApp.service.common.UpdateCustomerErrorCode;
+
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
@@ -10,9 +12,9 @@ public class UpdateCustomerException extends Exception {
     private final String code;
     private final String errorMessage;
 
-    public UpdateCustomerException(final String code, final String errorMessage) {
-        this.code = code;
-        this.errorMessage = errorMessage;
+    public UpdateCustomerException(final UpdateCustomerErrorCode errorCode) {
+        this.code = errorCode.getCode();
+        this.errorMessage = errorCode.getDefaultMessage();
     }
 
     @Override

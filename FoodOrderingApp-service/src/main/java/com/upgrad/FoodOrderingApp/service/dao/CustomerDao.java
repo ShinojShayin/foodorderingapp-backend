@@ -14,17 +14,36 @@ public class CustomerDao {
     private EntityManager entityManager;
 
     public CustomerEntity getCustomerByContactNumber (final String contact_number){
+        CustomerEntity customer = null;
         try{
-            CustomerEntity customer = entityManager.createNamedQuery("customerByContactNumber",CustomerEntity.class)
+            customer = entityManager.createNamedQuery("customerByContactNumber",CustomerEntity.class)
                     .setParameter("contact_number",contact_number).getSingleResult();
-            return customer;
+
         }catch (NoResultException e){
-            return null;
+           e.printStackTrace();
         }
+
+        return customer;
     }
 
     public CustomerEntity createCustomer(CustomerEntity customerEntity){
         entityManager.persist(customerEntity);
         return customerEntity;
+    }
+
+    public CustomerEntity getCustomerByUuid (final String uuid){
+        CustomerEntity customer = null;
+        try {
+            customer = entityManager.createNamedQuery("customerByUuid",CustomerEntity.class).setParameter("uuid",uuid).getSingleResult();
+
+        }catch (NoResultException e){
+           e.printStackTrace();
+        }
+        return customer;
+    }
+
+    public CustomerEntity updateCustomer(CustomerEntity customer){
+        entityManager.merge(customer);
+        return customer;
     }
 }
