@@ -1,5 +1,7 @@
 package com.upgrad.FoodOrderingApp.service.exception;
 
+import com.upgrad.FoodOrderingApp.service.common.AddressNotFoundErrorCode;
+
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
@@ -10,9 +12,9 @@ public class AddressNotFoundException extends Exception {
     private final String code;
     private final String errorMessage;
 
-    public AddressNotFoundException(final String code, final String errorMessage) {
-        this.code = code;
-        this.errorMessage = errorMessage;
+    public AddressNotFoundException(final AddressNotFoundErrorCode errorCode) {
+        this.code = errorCode.getCode();
+        this.errorMessage = errorCode.getDefaultMessage();
     }
 
     @Override
