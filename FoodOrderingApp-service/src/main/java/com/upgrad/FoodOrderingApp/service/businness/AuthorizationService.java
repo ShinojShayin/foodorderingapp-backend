@@ -18,27 +18,25 @@ public class AuthorizationService {
 
     public CustomerAuthEntity validateAccessToken(String authorization) throws AuthorizationFailedException {
 
-        try{
-            String accessToken = authorization.split("Bearer ")[1];
+       if(Objects.nonNull(authorization) && authorization.startsWith("Bearer ")) {
+           String accessToken = authorization.split("Bearer ")[1];
 
-            CustomerAuthEntity customerAuthEntity = customerAuthDao.getCustomerAuthByAccessToken(accessToken);
+           CustomerAuthEntity customerAuthEntity = customerAuthDao.getCustomerAuthByAccessToken(accessToken);
 
-            if(Objects.isNull(customerAuthEntity))
-                throw new AuthorizationFailedException(AuthorizationErrorCode.ATHR_001);
+           if(Objects.isNull(customerAuthEntity))
+               throw new AuthorizationFailedException(AuthorizationErrorCode.ATHR_001);
 
-            if(Objects.nonNull(customerAuthEntity.getLogoutAt()))
-                throw new AuthorizationFailedException(AuthorizationErrorCode.ATHR_002);
+           if(Objects.nonNull(customerAuthEntity.getLogoutAt()))
+               throw new AuthorizationFailedException(AuthorizationErrorCode.ATHR_002);
 
-            if (customerAuthEntity.getExpiresAt().isBefore(ZonedDateTime.now()))
-                throw new AuthorizationFailedException(AuthorizationErrorCode.ATHR_003);
+           if (customerAuthEntity.getExpiresAt().isBefore(ZonedDateTime.now()))
+               throw new AuthorizationFailedException(AuthorizationErrorCode.ATHR_003);
 
-            return customerAuthEntity;
+           return customerAuthEntity;
+       }
+       else{
+           throw new AuthorizationFailedException(AuthorizationErrorCode.ATHR_001);
         }
-        catch (Exception e){
-            throw new AuthorizationFailedException(AuthorizationErrorCode.ATHR_001);
-        }
-
-
 
     }
 }

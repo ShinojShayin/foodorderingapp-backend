@@ -84,6 +84,18 @@ public class CustomerController {
         return new ResponseEntity<LoginResponse>(loginResponse, headers, HttpStatus.OK);
     }
 
+    @RequestMapping(method = RequestMethod.POST, path = "/logout", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<LogoutResponse> logoutCustomer(@RequestHeader("authorization") final String authorization) throws AuthorizationFailedException {
+
+        CustomerAuthEntity loggedCustomerAuth = authorizationService.validateAccessToken(authorization);
+
+        CustomerAuthEntity customerAuthEntity = customerService.logout(loggedCustomerAuth.getAccessToken());
+
+        LogoutResponse logoutResponse = new LogoutResponse()
+                .id(customerAuthEntity.getCustomer().getUuid())
+                .message("LOGGED OUT SUCCESSFULLY");
+        return new ResponseEntity<LogoutResponse>(logoutResponse, HttpStatus.OK);
+    }
 
     @RequestMapping(method = RequestMethod.PUT, path = "",
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
@@ -93,9 +105,9 @@ public class CustomerController {
             @RequestBody(required = false) UpdateCustomerRequest updateCustomerRequest)
             throws AuthorizationFailedException, UpdateCustomerException {
 
-        CustomerAuthEntity customerAuthEntity = authorizationService.validateAccessToken(authorization);
+        CustomerAuthEntity loggedCustomerAuth = authorizationService.validateAccessToken(authorization);
 
-        CustomerEntity customerEntityReq = customerAuthEntity.getCustomer();
+        CustomerEntity customerEntityReq = loggedCustomerAuth.getCustomer();
         customerEntityReq.setFirstName(updateCustomerRequest.getFirstName());
         customerEntityReq.setLastName(updateCustomerRequest.getLastName());
 
@@ -111,4 +123,7 @@ public class CustomerController {
 
         return new ResponseEntity<UpdateCustomerResponse>(updateCustomerResponse, HttpStatus.OK);
     }
+
+    
+
 }

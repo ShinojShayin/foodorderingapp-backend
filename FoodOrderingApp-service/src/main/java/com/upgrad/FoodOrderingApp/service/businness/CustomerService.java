@@ -134,4 +134,11 @@ public class CustomerService {
         CustomerEntity customerEntityResp = customerDao.updateCustomer(existingCustomer);
         return customerEntityResp;
     }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public CustomerAuthEntity logout(String accessToken) {
+        CustomerAuthEntity existingCustomerAuth = customerAuthDao.getCustomerAuthByAccessToken(accessToken);
+        existingCustomerAuth.setLogoutAt(ZonedDateTime.now());
+        return customerAuthDao.updateCustomerAuth(existingCustomerAuth);
+    }
 }
