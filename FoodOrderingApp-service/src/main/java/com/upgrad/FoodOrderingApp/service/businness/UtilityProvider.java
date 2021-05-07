@@ -37,4 +37,10 @@ public class UtilityProvider {
                minimumOneUppercaseCheck.test(password) &&
                minimumOneSpecialCharacterCheck.test(password);
     };
+
+    public static boolean isPincodeValid(String pincode) {
+        Pattern pincodePattern = Pattern.compile("\\d{6}\\b");
+        Matcher matcher = pincodePattern.matcher(pincode);
+        return (matcher.find() && matcher.group().equals(pincode));
+    }
 }
