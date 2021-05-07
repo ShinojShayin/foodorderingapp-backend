@@ -141,4 +141,31 @@ public class CustomerService {
         existingCustomerAuth.setLogoutAt(ZonedDateTime.now());
         return customerAuthDao.updateCustomerAuth(existingCustomerAuth);
     }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public CustomerEntity updateCustomerPassword(String oldPassword, String newPassword, CustomerEntity loggedCustomerEntity) throws UpdateCustomerException {
+
+        if(StringUtils.isEmpty(oldPassword) || StringUtils.isEmpty(newPassword))
+            throw new UpdateCustomerException(UpdateCustomerErrorCode.UCR_003);
+
+        if(!UtilityProvider.isValidPassword.test(newPassword))
+            throw new UpdateCustomerException(UpdateCustomerErrorCode.UCR_001);
+
+        String encryptedOldPassword = passwordCryptographyProvider.encrypt(oldPassword, loggedCustomerEntity.getSalt());
+
+        if (encryptedOldPassword.equals(loggedCustomerEntity.getPassword())) {
+            CustomerEntity updatedCustomerEntity = customerDao.getCustomerByUuid(loggedCustomerEntity.getUuid());
+
+            String[] encryptedPassword = passwordCryptographyProvider.encrypt(newPassword);
+            updatedCustomerEntity.setSalt(encryptedPassword[0]);
+            updatedCustomerEntity.setPassword(encryptedPassword[1]);
+
+            updatedCustomerEntity = customerDao.updateCustomer(updatedCustomerEntity);
+
+            return updatedCustomerEntity;
+        }
+        else
+            throw new UpdateCustomerException(UpdateCustomerErrorCode.UCR_004);
+    }
+
 }
