@@ -1,6 +1,7 @@
 package com.upgrad.FoodOrderingApp.service.businness;
 
 import com.upgrad.FoodOrderingApp.service.common.AuthenticationErrorCode;
+import com.upgrad.FoodOrderingApp.service.common.AuthorizationErrorCode;
 import com.upgrad.FoodOrderingApp.service.common.SignupErrorCode;
 import com.upgrad.FoodOrderingApp.service.common.UpdateCustomerErrorCode;
 import com.upgrad.FoodOrderingApp.service.dao.CustomerAuthDao;
@@ -8,6 +9,7 @@ import com.upgrad.FoodOrderingApp.service.dao.CustomerDao;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
+import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
 import com.upgrad.FoodOrderingApp.service.exception.UpdateCustomerException;
 import org.apache.commons.lang3.StringUtils;
@@ -35,12 +37,6 @@ public class CustomerService {
 
     public void validateCustomerSignup(CustomerEntity reqCustomerEntity) throws SignUpRestrictedException {
 
-        if (StringUtils.isEmpty(reqCustomerEntity.getContactNumber()) ||
-                StringUtils.isEmpty(reqCustomerEntity.getEmail()) ||
-                StringUtils.isEmpty(reqCustomerEntity.getFirstName()) ||
-                StringUtils.isEmpty(reqCustomerEntity.getPassword()))
-            throw new SignUpRestrictedException(SignupErrorCode.SGR_005);
-
         if (!UtilityProvider.isValidEmail.test(reqCustomerEntity.getEmail()))
             throw new SignUpRestrictedException(SignupErrorCode.SGR_002);
 
@@ -53,7 +49,7 @@ public class CustomerService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public CustomerEntity customerSignup(CustomerEntity reqCustomerEntity) throws SignUpRestrictedException {
+    public CustomerEntity saveCustomer(CustomerEntity reqCustomerEntity) throws SignUpRestrictedException {
 
         CustomerEntity existingCustomer = customerDao.getCustomerByContactNumber(reqCustomerEntity.getContactNumber());
 
@@ -68,29 +64,10 @@ public class CustomerService {
         return customerDao.createCustomer(reqCustomerEntity);
     }
 
-    public String[] validateLoginAuthorizationHeader(String authorization) throws AuthenticationFailedException {
 
-        String[] credential = null;
-
-        if(StringUtils.isNotEmpty(authorization)){
-            try{
-                byte[] decodedAuth = Base64.getDecoder().decode(authorization.split("Basic ")[1]);
-                String decodedAuthStr = new String(decodedAuth);
-                String[] decodedAuthArray = decodedAuthStr.split(":");
-                String username = decodedAuthArray[0];
-                String password = decodedAuthArray[1];
-                return decodedAuthArray;
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-
-        }
-
-        throw new AuthenticationFailedException(AuthenticationErrorCode.ATH_003);
-    }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public CustomerAuthEntity authenticateCredentials(String contactNumber, String password) throws AuthenticationFailedException {
+    public CustomerAuthEntity authenticate(String contactNumber, String password) throws AuthenticationFailedException {
 
         CustomerEntity existingCustomer = customerDao.getCustomerByContactNumber(contactNumber);
 
@@ -121,13 +98,9 @@ public class CustomerService {
 
     }
 
-    public void validateUpdateCustomer(CustomerEntity customerEntityReq) throws UpdateCustomerException {
-        if(StringUtils.isEmpty(customerEntityReq.getFirstName()))
-            throw new UpdateCustomerException(UpdateCustomerErrorCode.UCR_002);
-    }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public CustomerEntity updateCustomerEntity(CustomerEntity customerEntityReq){
+    public CustomerEntity updateCustomer(CustomerEntity customerEntityReq){
         CustomerEntity existingCustomer = customerDao.getCustomerByUuid(customerEntityReq.getUuid());
         existingCustomer.setFirstName(customerEntityReq.getFirstName());
         existingCustomer.setLastName(customerEntityReq.getLastName());
@@ -136,7 +109,8 @@ public class CustomerService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public CustomerAuthEntity logout(String accessToken) {
+    public CustomerAuthEntity logout(String accessToken) throws AuthorizationFailedException {
+        getCustomer(accessToken);
         CustomerAuthEntity existingCustomerAuth = customerAuthDao.getCustomerAuthByAccessToken(accessToken);
         existingCustomerAuth.setLogoutAt(ZonedDateTime.now());
         return customerAuthDao.updateCustomerAuth(existingCustomerAuth);
@@ -144,9 +118,6 @@ public class CustomerService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public CustomerEntity updateCustomerPassword(String oldPassword, String newPassword, CustomerEntity loggedCustomerEntity) throws UpdateCustomerException {
-
-        if(StringUtils.isEmpty(oldPassword) || StringUtils.isEmpty(newPassword))
-            throw new UpdateCustomerException(UpdateCustomerErrorCode.UCR_003);
 
         if(!UtilityProvider.isValidPassword.test(newPassword))
             throw new UpdateCustomerException(UpdateCustomerErrorCode.UCR_001);
@@ -166,6 +137,23 @@ public class CustomerService {
         }
         else
             throw new UpdateCustomerException(UpdateCustomerErrorCode.UCR_004);
+    }
+
+    public CustomerEntity getCustomer(String accessToken) throws AuthorizationFailedException {
+
+        CustomerAuthEntity customerAuthEntity = customerAuthDao.getCustomerAuthByAccessToken(accessToken);
+
+        if(Objects.isNull(customerAuthEntity))
+            throw new AuthorizationFailedException(AuthorizationErrorCode.ATHR_001);
+
+        if(Objects.nonNull(customerAuthEntity.getLogoutAt()))
+            throw new AuthorizationFailedException(AuthorizationErrorCode.ATHR_002);
+
+        if (customerAuthEntity.getExpiresAt().isBefore(ZonedDateTime.now()))
+            throw new AuthorizationFailedException(AuthorizationErrorCode.ATHR_003);
+
+        return customerAuthEntity.getCustomer();
+
     }
 
 }

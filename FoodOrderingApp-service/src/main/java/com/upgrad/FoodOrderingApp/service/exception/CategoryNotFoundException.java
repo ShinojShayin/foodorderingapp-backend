@@ -17,6 +17,11 @@ public class CategoryNotFoundException extends Exception {
         this.errorMessage = errorCode.getDefaultMessage();
     }
 
+    public CategoryNotFoundException(final String code, final String errorMessage){
+        this.code = code;
+        this.errorMessage = errorMessage;
+    }
+
     @Override
     public void printStackTrace() {
         super.printStackTrace();
