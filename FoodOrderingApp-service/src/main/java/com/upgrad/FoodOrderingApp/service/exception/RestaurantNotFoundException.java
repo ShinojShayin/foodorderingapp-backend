@@ -1,5 +1,7 @@
 package com.upgrad.FoodOrderingApp.service.exception;
 
+import com.upgrad.FoodOrderingApp.service.common.RestaurantNotFoundErrorCode;
+
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
@@ -10,7 +12,12 @@ public class RestaurantNotFoundException extends Exception {
     private final String code;
     private final String errorMessage;
 
-    public RestaurantNotFoundException(final String code, final String errorMessage) {
+    public RestaurantNotFoundException(final RestaurantNotFoundErrorCode errorCode) {
+        this.code = errorCode.getCode();
+        this.errorMessage = errorCode.getDefaultMessage();
+    }
+
+    public RestaurantNotFoundException(final String code, final String errorMessage){
         this.code = code;
         this.errorMessage = errorMessage;
     }

@@ -1,4 +1,4 @@
-/*
+
 package com.upgrad.FoodOrderingApp.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +14,7 @@ import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AddressNotFoundException;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SaveAddressException;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Collections;
 import java.util.UUID;
 
-import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -333,16 +333,16 @@ public class AddressControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
         final AddressListResponse addressLists = new ObjectMapper().readValue(response, AddressListResponse.class);
-        assertEquals(addressLists.getAddresses().size(), 1);
+        Assert.assertEquals(addressLists.getAddresses().size(), 1);
 
         final AddressList addressList = addressLists.getAddresses().get(0);
-        assertEquals(addressList.getFlatBuildingName(), "flatBuildNo");
-        assertEquals(addressList.getLocality(), "locality");
-        assertEquals(addressList.getPincode(), "100000");
-        assertEquals(addressList.getCity(), "city");
-        assertEquals(addressList.getState().getId().toString(), stateUuid);
-        assertEquals(addressList.getState().getStateName(), "state");
-        assertEquals(addressList.getId().toString(), addressUuid);
+        Assert.assertEquals(addressList.getFlatBuildingName(), "flatBuildNo");
+        Assert.assertEquals(addressList.getLocality(), "locality");
+        Assert.assertEquals(addressList.getPincode(), "100000");
+        Assert.assertEquals(addressList.getCity(), "city");
+        Assert.assertEquals(addressList.getState().getId().toString(), stateUuid);
+        Assert.assertEquals(addressList.getState().getStateName(), "state");
+        Assert.assertEquals(addressList.getId().toString(), addressUuid);
 
         verify(mockCustomerService, times(1)).getCustomer("database_accesstoken2");
         verify(mockAddressService, times(1)).getAllAddress(customerEntity);
@@ -413,11 +413,11 @@ public class AddressControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
         final StatesListResponse statesLists = new ObjectMapper().readValue(response, StatesListResponse.class);
-        assertEquals(statesLists.getStates().size(), 1);
+        Assert.assertEquals(statesLists.getStates().size(), 1);
 
         final StatesList statesList = statesLists.getStates().get(0);
-        assertEquals(statesList.getId().toString(), stateUuid);
-        assertEquals(statesList.getStateName(), "stateName");
+        Assert.assertEquals(statesList.getId().toString(), stateUuid);
+        Assert.assertEquals(statesList.getStateName(), "stateName");
     }
 
     //This test case passes when you are not able to retrive any states if there are no states saved in the database.
@@ -431,8 +431,7 @@ public class AddressControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
         final StatesListResponse statesLists = new ObjectMapper().readValue(response, StatesListResponse.class);
-        assertNull(statesLists.getStates());
+        Assert.assertNull(statesLists.getStates());
     }
 }
 
- */

@@ -1,5 +1,7 @@
 package com.upgrad.FoodOrderingApp.service.exception;
 
+import com.upgrad.FoodOrderingApp.service.common.InvalidRatingErrorCode;
+
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
@@ -10,7 +12,12 @@ public class InvalidRatingException extends Exception {
     private final String code;
     private final String errorMessage;
 
-    public InvalidRatingException(final String code, final String errorMessage) {
+    public InvalidRatingException(final InvalidRatingErrorCode errorCode) {
+        this.code = errorCode.getCode();
+        this.errorMessage = errorCode.getDefaultMessage();
+    }
+
+    public InvalidRatingException(final String code, final String errorMessage){
         this.code = code;
         this.errorMessage = errorMessage;
     }

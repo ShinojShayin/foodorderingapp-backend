@@ -1,5 +1,7 @@
 package com.upgrad.FoodOrderingApp.service.exception;
 
+import com.upgrad.FoodOrderingApp.service.common.PaymentMethodNotFoundErrorCode;
+
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
@@ -10,7 +12,12 @@ public class PaymentMethodNotFoundException extends Exception {
     private final String code;
     private final String errorMessage;
 
-    public PaymentMethodNotFoundException(final String code, final String errorMessage) {
+    public PaymentMethodNotFoundException(final PaymentMethodNotFoundErrorCode errorCode) {
+        this.code = errorCode.getCode();
+        this.errorMessage = errorCode.getDefaultMessage();
+    }
+
+    public PaymentMethodNotFoundException(final String code, final String errorMessage){
         this.code = code;
         this.errorMessage = errorMessage;
     }
