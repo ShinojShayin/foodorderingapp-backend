@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 @NamedQueries({
         @NamedQuery(name = "restaurantsOrderbyRating",query = "SELECT r FROM RestaurantEntity r ORDER BY r.customerRating DESC"),
         @NamedQuery(name = "getRestaurantByUuid",query = "SELECT r FROM RestaurantEntity r WHERE r.uuid = :uuid"),
-        @NamedQuery(name = "restaurantsLikeName",query = "SELECT r FROM  RestaurantEntity r WHERE LOWER(r.restaurantName) LIKE :restaurant_name_low"),
+        @NamedQuery(name = "restaurantsLikeName",query = "SELECT r FROM  RestaurantEntity r WHERE LOWER(r.restaurantName) LIKE :restaurant_name"),
 })
 public class RestaurantEntity {
 
