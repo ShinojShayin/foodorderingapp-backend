@@ -1,6 +1,7 @@
 package com.upgrad.FoodOrderingApp.service.businness;
 
 import com.upgrad.FoodOrderingApp.service.common.AddressNotFoundErrorCode;
+import com.upgrad.FoodOrderingApp.service.common.AuthorizationErrorCode;
 import com.upgrad.FoodOrderingApp.service.common.SaveAddressErrorCode;
 import com.upgrad.FoodOrderingApp.service.dao.AddressDao;
 import com.upgrad.FoodOrderingApp.service.dao.CustomerAddressDao;
@@ -10,12 +11,18 @@ import com.upgrad.FoodOrderingApp.service.entity.CustomerAddressEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AddressNotFoundException;
+import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SaveAddressException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class AddressService {
@@ -67,5 +74,50 @@ public class AddressService {
         CustomerAddressEntity createdCustomerAddressEntity = customerAddressDao.saveCustomerAddress(customerAddressEntity);
         return createdCustomerAddressEntity;
 
+    }
+
+    public List<AddressEntity> getAllAddress(CustomerEntity customerEntity) {
+
+        List<CustomerAddressEntity> customerAddressEntities  = customerAddressDao.getAllCustomerAddressByCustomer(customerEntity);
+
+        List<AddressEntity> addressEntities = new LinkedList<>();
+        if(Objects.nonNull(customerAddressEntities)){
+            customerAddressEntities.stream().forEach(obj->{
+                addressEntities.add(obj.getAddress());
+            });
+        }
+        Collections.reverse(addressEntities);
+        return addressEntities;
+    }
+
+    public AddressEntity getAddressByUUID(String addressUuid, CustomerEntity customerEntity) throws AddressNotFoundException, AuthorizationFailedException {
+
+        if(Objects.isNull(addressUuid))
+            throw new AddressNotFoundException(AddressNotFoundErrorCode.ANF_005);
+
+        AddressEntity addressEntity = addressDao.getAddressByUuid(addressUuid);
+
+        if(Objects.isNull(addressEntity))
+            throw new AddressNotFoundException(AddressNotFoundErrorCode.ANF_003);
+
+        CustomerAddressEntity customerAddressEntity = customerAddressDao.getCustomerAddressByAddress(addressEntity);
+
+        if(!(customerAddressEntity.getCustomer().getUuid() == customerEntity.getUuid()))
+            throw new AuthorizationFailedException(AuthorizationErrorCode.ATHR_004);
+
+        return addressEntity;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public AddressEntity deleteAddress(AddressEntity addressEntity) {
+
+        AddressEntity deletedAddressEntity = addressDao.deleteAddress(addressEntity);
+        return deletedAddressEntity;
+
+    }
+
+    public List<StateEntity> getAllStates() {
+        List<StateEntity> stateEntities = stateDao.getAllStates();
+        return stateEntities;
     }
 }
