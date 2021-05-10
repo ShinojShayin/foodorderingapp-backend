@@ -1,6 +1,6 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
-import com.upgrad.FoodOrderingApp.service.common.ItemTypeEnum;
+import com.upgrad.FoodOrderingApp.service.common.ItemType;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -36,7 +36,7 @@ public class ItemEntity {
     @Column(name = "type")
     @Size(max = 10)
     @NotNull
-    private ItemTypeEnum type;
+    private ItemType type;
 
     public Integer getId() {
         return id;
@@ -70,11 +70,11 @@ public class ItemEntity {
         this.price = price;
     }
 
-    public ItemTypeEnum getType() {
+    public ItemType getType() {
         return type;
     }
 
-    public void setType(ItemTypeEnum type) {
+    public void setType(ItemType type) {
         this.type = type;
     }
 
