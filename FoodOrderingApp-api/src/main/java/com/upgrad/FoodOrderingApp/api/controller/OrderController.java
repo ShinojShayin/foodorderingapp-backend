@@ -159,7 +159,11 @@ public class OrderController {
         String accessToken = authorization.split("Bearer ")[1];
         CustomerEntity customerEntity = customerService.getCustomer(accessToken);
 
-        CouponEntity couponEntity = orderService.getCouponByCouponId(saveOrderRequest.getCouponId().toString());
+        CouponEntity couponEntity = null;
+
+        if(Objects.nonNull(saveOrderRequest.getCouponId()))
+            couponEntity = orderService.getCouponByCouponId(saveOrderRequest.getCouponId().toString());
+
         PaymentEntity paymentEntity = paymentService.getPaymentByUUID(saveOrderRequest.getPaymentId().toString());
         AddressEntity addressEntity = addressService.getAddressByUUID(saveOrderRequest.getAddressId(),
                 customerEntity);

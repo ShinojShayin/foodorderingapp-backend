@@ -58,11 +58,10 @@ public class OrderService {
     }
 
     public CouponEntity getCouponByCouponId(String couponId) throws CouponNotFoundException {
-
         CouponEntity couponEntity = couponDao.getCouponByCouponId(couponId);
 
         if(Objects.isNull(couponEntity))
-            throw new CouponNotFoundException(CouponNotFoundErrorCode.CPF_002);
+            throw new CouponNotFoundException(CouponNotFoundErrorCode.CPF_002_ID);
 
         return couponEntity;
     }

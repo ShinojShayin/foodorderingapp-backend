@@ -17,7 +17,14 @@ public enum CouponNotFoundErrorCode implements ErrorCode {
    * <b>Cause:</b> If the coupon name entered by the customer is empty<br>
    * <b>Action: Coupon name field should not be left blank</b><br>
    */
-  CPF_002("CPF-002", "Coupon name field should not be empty");
+  CPF_002("CPF-002", "Coupon name field should not be empty"),
+
+  /**
+   * Error message: <b>Coupon name field should not be empty</b><br>
+   * <b>Cause:</b> If the coupon name entered by the customer is empty<br>
+   * <b>Action: Coupon name field should not be left blank</b><br>
+   */
+  CPF_002_ID("CPF-002", "No coupon by this id");
 
 
   private static final Map<String, CouponNotFoundErrorCode> LOOKUP =

@@ -11,6 +11,14 @@ public enum PaymentMethodNotFoundErrorCode implements ErrorCode {
    * does not match any payment method that exists in the database<br>
    * <b>Action: Provide proper contact number which exist in the database</b><br>
    */
+  PNF_001("PNF-001", "Payment id field should not be empty"),
+
+  /**
+   * Error message: <b>No payment method found by this id</b><br>
+   * <b>Cause:</b> If the payment uuid entered by the customer
+   * does not match any payment method that exists in the database<br>
+   * <b>Action: Provide proper contact number which exist in the database</b><br>
+   */
   PNF_002("PNF-002", "No payment method found by this id");
 
 

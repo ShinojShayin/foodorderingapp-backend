@@ -20,7 +20,7 @@ import java.util.UUID;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/")
+@RequestMapping("/category")
 public class CategoryController {
 
     @Autowired
@@ -48,7 +48,8 @@ public class CategoryController {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/{category_id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<CategoryDetailsResponse> getCategoryById(@PathVariable(value = "category_id") final String categoryUuid) throws CategoryNotFoundException {
+    public ResponseEntity<CategoryDetailsResponse> getCategoryById(
+            @PathVariable(value = "category_id") final String categoryUuid) throws CategoryNotFoundException {
 
         CategoryEntity categoryEntity = categoryService.getCategoryById(categoryUuid);
 
