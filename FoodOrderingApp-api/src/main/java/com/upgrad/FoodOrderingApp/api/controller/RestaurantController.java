@@ -5,6 +5,7 @@ import com.upgrad.FoodOrderingApp.service.businness.CategoryService;
 import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
 import com.upgrad.FoodOrderingApp.service.businness.ItemService;
 import com.upgrad.FoodOrderingApp.service.businness.RestaurantService;
+import com.upgrad.FoodOrderingApp.service.common.AuthorizationErrorCode;
 import com.upgrad.FoodOrderingApp.service.entity.CategoryEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.entity.ItemEntity;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @CrossOrigin
@@ -88,9 +90,8 @@ public class RestaurantController {
 
         List<RestaurantEntity> restaurantEntities = restaurantService.restaurantsByName(restaurantName);
 
+        List<RestaurantList> restaurantLists = new LinkedList<>();
         if (!restaurantEntities.isEmpty()) {
-            List<RestaurantList> restaurantLists = new LinkedList<>();
-
             restaurantEntities.stream().forEach(restaurantEntity -> {
 
                 RestaurantDetailsResponseAddressState restaurantDetailsResponseAddressState = new RestaurantDetailsResponseAddressState()
@@ -120,11 +121,10 @@ public class RestaurantController {
                 restaurantLists.add(restaurantList);
             });
 
-            RestaurantListResponse restaurantListResponse = new RestaurantListResponse().restaurants(restaurantLists);
-            return new ResponseEntity<RestaurantListResponse>(restaurantListResponse, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<RestaurantListResponse>(new RestaurantListResponse(), HttpStatus.OK);
         }
+
+        RestaurantListResponse restaurantListResponse = new RestaurantListResponse().restaurants(restaurantLists);
+        return new ResponseEntity<RestaurantListResponse>(restaurantListResponse, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/category/{category_id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -234,6 +234,9 @@ public class RestaurantController {
             @PathVariable(value = "restaurant_id") final String restaurantUuid,
             @RequestParam(value = "customer_rating") final Double customerRating)
             throws AuthorizationFailedException, RestaurantNotFoundException, InvalidRatingException {
+
+        if(Objects.isNull(authorization) || !authorization.startsWith("Bearer "))
+            throw new AuthorizationFailedException(AuthorizationErrorCode.ATHR_001);
 
         final String accessToken = authorization.split("Bearer ")[1];
         CustomerEntity customerEntity = customerService.getCustomer(accessToken);

@@ -140,13 +140,12 @@ public class OrderController {
 
             });
 
-            CustomerOrderResponse customerOrderResponse = new CustomerOrderResponse()
-                    .orders(orderLists);
-            return new ResponseEntity<CustomerOrderResponse>(customerOrderResponse, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<CustomerOrderResponse>(new CustomerOrderResponse(), HttpStatus.OK);//If no order created by customer empty array is returned.
 
         }
+
+        CustomerOrderResponse customerOrderResponse = new CustomerOrderResponse()
+                .orders(orderLists);
+        return new ResponseEntity<CustomerOrderResponse>(customerOrderResponse, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "",

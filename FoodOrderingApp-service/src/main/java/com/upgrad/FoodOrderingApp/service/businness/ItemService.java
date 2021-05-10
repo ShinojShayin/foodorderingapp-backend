@@ -121,8 +121,6 @@ public class ItemService {
 
         if(count < 5){
 
-
-
             List<RestaurantItemEntity> restaurantItemEntities = restaurantItemDao.getItemsByRestaurantWithLimit(
                     restaurantEntity,
                     (10-count));

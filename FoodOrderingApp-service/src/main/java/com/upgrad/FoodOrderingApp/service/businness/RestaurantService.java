@@ -15,6 +15,8 @@ import com.upgrad.FoodOrderingApp.service.exception.RestaurantNotFoundException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
 import java.util.LinkedList;
@@ -93,6 +95,7 @@ public class RestaurantService {
         return false;
     };
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public RestaurantEntity updateRestaurantRating(RestaurantEntity restaurantEntity, Double customerRatingProvided)
             throws InvalidRatingException {
 

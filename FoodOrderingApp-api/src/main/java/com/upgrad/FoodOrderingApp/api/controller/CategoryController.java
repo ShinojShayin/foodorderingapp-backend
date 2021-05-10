@@ -31,8 +31,9 @@ public class CategoryController {
 
         List<CategoryEntity> categoryEntities = categoryService.getAllCategoriesOrderedByName();
 
+        List<CategoryListResponse> categoryListResponses = new LinkedList<>();
         if (!categoryEntities.isEmpty()) {
-            List<CategoryListResponse> categoryListResponses = new LinkedList<>();
+
             categoryEntities.forEach(categoryEntity -> {
                 CategoryListResponse categoryListResponse = new CategoryListResponse()
                         .id(UUID.fromString(categoryEntity.getUuid()))
@@ -40,11 +41,10 @@ public class CategoryController {
                 categoryListResponses.add(categoryListResponse);
             });
 
-            CategoriesListResponse categoriesListResponse = new CategoriesListResponse().categories(categoryListResponses);
-            return new ResponseEntity<CategoriesListResponse>(categoriesListResponse, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<CategoriesListResponse>(new CategoriesListResponse(), HttpStatus.OK);
+
         }
+        CategoriesListResponse categoriesListResponse = new CategoriesListResponse().categories(categoryListResponses);
+        return new ResponseEntity<CategoriesListResponse>(categoriesListResponse, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/{category_id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

@@ -26,8 +26,9 @@ public class CustomerAddressDao {
         try{
 
             customerAddressEntities = entityManager.createNamedQuery("getAllCustomerAddressByCustomer",
-                    CustomerAddressEntity.class).setParameter("customer_entity",customerEntity)
-                    .setParameter("active",1).getResultList();
+                    CustomerAddressEntity.class)
+                    .setParameter("customer_entity",customerEntity)
+                    .getResultList();
 
         }catch (NoResultException e){
             e.printStackTrace();
@@ -38,7 +39,9 @@ public class CustomerAddressDao {
     public CustomerAddressEntity getCustomerAddressByAddress(AddressEntity addressEntity){
         CustomerAddressEntity customerAddressEntity = null;
         try {
-             customerAddressEntity = entityManager.createNamedQuery("getCustomerAddressByAddress",CustomerAddressEntity.class).setParameter("address_entity",addressEntity).getSingleResult();
+             customerAddressEntity = entityManager.createNamedQuery("getCustomerAddressByAddress",CustomerAddressEntity.class)
+                     .setParameter("address_entity",addressEntity)
+                     .getSingleResult();
         }catch (NoResultException e){
            e.printStackTrace();
         }
