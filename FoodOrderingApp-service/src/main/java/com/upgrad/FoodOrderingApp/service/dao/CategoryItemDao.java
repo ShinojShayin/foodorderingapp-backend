@@ -15,15 +15,21 @@ public class CategoryItemDao {
     @PersistenceContext
     private EntityManager entityManager;
 
+    /**
+     * fetch items by category
+     *
+     * @param categoryEntity
+     * @return
+     */
     public List<CategoryItemEntity> getItemsByCategory(CategoryEntity categoryEntity) {
         List<CategoryItemEntity> categoryItemEntities = null;
         try {
             categoryItemEntities = entityManager.createNamedQuery(
-                    "getItemsByCategory",CategoryItemEntity.class)
-                    .setParameter("category",categoryEntity)
+                    "getItemsByCategory", CategoryItemEntity.class)
+                    .setParameter("category", categoryEntity)
                     .getResultList();
 
-        }catch (NoResultException e){
+        } catch (NoResultException e) {
             e.printStackTrace();
         }
         return categoryItemEntities;

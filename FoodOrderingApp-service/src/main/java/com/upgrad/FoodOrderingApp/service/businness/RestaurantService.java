@@ -38,11 +38,23 @@ public class RestaurantService {
     @Autowired
     RestaurantCategoryDao restaurantCategoryDao;
 
+    /**
+     * This method will load most rated restaurant in desc order
+     *
+     * @return
+     */
     public List<RestaurantEntity> restaurantsByRating() {
         List<RestaurantEntity> restaurantEntities = restaurantDao.getRestaurantOrderByRating();
         return restaurantEntities;
     }
 
+    /**
+     * Load restaurant object by restaurant name
+     *
+     * @param restaurantName
+     * @return
+     * @throws RestaurantNotFoundException
+     */
     public List<RestaurantEntity> restaurantsByName(String restaurantName) throws RestaurantNotFoundException {
 
         if(StringUtils.isEmpty(restaurantName))
@@ -52,6 +64,13 @@ public class RestaurantService {
         return restaurantEntities;
     }
 
+    /**
+     * This method return restaurant by category id
+     *
+     * @param categoryId
+     * @return
+     * @throws CategoryNotFoundException
+     */
     public List<RestaurantEntity> restaurantByCategory(String categoryId) throws CategoryNotFoundException {
 
         if(StringUtils.isEmpty(categoryId))
@@ -73,6 +92,13 @@ public class RestaurantService {
 
     }
 
+    /**
+     * This method return restaurant by restaurant uuid
+     *
+     * @param restaurantUuid
+     * @return
+     * @throws RestaurantNotFoundException
+     */
     public RestaurantEntity restaurantByUUID(String restaurantUuid) throws RestaurantNotFoundException {
 
         if(StringUtils.isEmpty(restaurantUuid))
@@ -87,7 +113,9 @@ public class RestaurantService {
     }
 
 
-
+    /**
+     * This method validate if rating is between 1.0 and 5.0
+     */
     Predicate<Double> isValidCustomerRating = (rating) ->{
         if(Objects.nonNull(rating)){
             return rating >= 1.0 && rating <= 5.0 ;
@@ -95,6 +123,14 @@ public class RestaurantService {
         return false;
     };
 
+    /**
+     * This method will update rating of a restaurant
+     *
+     * @param restaurantEntity
+     * @param customerRatingProvided
+     * @return
+     * @throws InvalidRatingException
+     */
     @Transactional(propagation = Propagation.REQUIRED)
     public RestaurantEntity updateRestaurantRating(RestaurantEntity restaurantEntity, Double customerRatingProvided)
             throws InvalidRatingException {

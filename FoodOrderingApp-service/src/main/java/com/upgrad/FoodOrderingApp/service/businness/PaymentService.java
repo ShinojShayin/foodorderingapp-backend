@@ -16,19 +16,31 @@ public class PaymentService {
     @Autowired
     PaymentDao paymentDao;
 
+    /**
+     * This method will load payment object based on paymentid provided
+     *
+     * @param paymentId
+     * @return
+     * @throws PaymentMethodNotFoundException
+     */
     public PaymentEntity getPaymentByUUID(String paymentId) throws PaymentMethodNotFoundException {
 
-        if(Objects.isNull(paymentId))
+        if (Objects.isNull(paymentId))
             throw new PaymentMethodNotFoundException(PaymentMethodNotFoundErrorCode.PNF_001);
 
         PaymentEntity paymentEntity = paymentDao.getPaymentByUUID(paymentId);
 
-        if(Objects.isNull(paymentEntity))
+        if (Objects.isNull(paymentEntity))
             throw new PaymentMethodNotFoundException(PaymentMethodNotFoundErrorCode.PNF_002);
 
         return paymentEntity;
     }
 
+    /**
+     * This method will give list of payment methods available in the system
+     *
+     * @return
+     */
     public List<PaymentEntity> getAllPaymentMethods() {
 
         List<PaymentEntity> paymentEntities = paymentDao.getAllPaymentMethods();
