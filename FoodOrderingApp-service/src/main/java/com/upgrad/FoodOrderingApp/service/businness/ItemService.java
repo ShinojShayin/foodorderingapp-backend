@@ -49,4 +49,11 @@ public class ItemService {
 
         return itemEntities;
     }
+
+    public List<ItemEntity> getItemsByPopularity(RestaurantEntity restaurantEntity) {
+
+      //  List <OrdersEntity> ordersEntities = orderDao.getOrdersByRestaurant(restaurantEntity);
+
+    return null;
+    }
 }
