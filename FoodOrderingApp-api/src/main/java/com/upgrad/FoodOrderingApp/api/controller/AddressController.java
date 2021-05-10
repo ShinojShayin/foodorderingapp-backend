@@ -149,8 +149,12 @@ public class AddressController {
                         .stateName(stateEntity.getStateName());
                 statesLists.add(statesList);
             });
+            StatesListResponse statesListResponse = new StatesListResponse().states(statesLists);
+            return new ResponseEntity<StatesListResponse>(statesListResponse, HttpStatus.OK);
         }
-        StatesListResponse statesListResponse = new StatesListResponse().states(statesLists);
-        return new ResponseEntity<StatesListResponse>(statesListResponse, HttpStatus.OK);
+       else{
+            StatesListResponse statesListResponse = new StatesListResponse();
+            return new ResponseEntity<StatesListResponse>(statesListResponse, HttpStatus.OK);
+        }
     }
 }

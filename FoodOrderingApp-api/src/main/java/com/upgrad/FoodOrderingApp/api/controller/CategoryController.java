@@ -45,11 +45,14 @@ public class CategoryController {
                         .categoryName(categoryEntity.getCategoryName());
                 categoryListResponses.add(categoryListResponse);
             });
-
-
+            CategoriesListResponse categoriesListResponse = new CategoriesListResponse().categories(categoryListResponses);
+            return new ResponseEntity<CategoriesListResponse>(categoriesListResponse, HttpStatus.OK);
         }
-        CategoriesListResponse categoriesListResponse = new CategoriesListResponse().categories(categoryListResponses);
-        return new ResponseEntity<CategoriesListResponse>(categoriesListResponse, HttpStatus.OK);
+        else{
+            CategoriesListResponse categoriesListResponse = new CategoriesListResponse();
+            return new ResponseEntity<CategoriesListResponse>(categoriesListResponse, HttpStatus.OK);
+        }
+
     }
 
     /**
