@@ -1,15 +1,13 @@
 package com.upgrad.FoodOrderingApp.service.businness;
 
-import com.upgrad.FoodOrderingApp.service.dao.CategoryDao;
-import com.upgrad.FoodOrderingApp.service.dao.CategoryItemDao;
-import com.upgrad.FoodOrderingApp.service.dao.RestaurantDao;
-import com.upgrad.FoodOrderingApp.service.dao.RestaurantItemDao;
+import com.upgrad.FoodOrderingApp.service.common.ItemNotFoundErrorCode;
+import com.upgrad.FoodOrderingApp.service.dao.*;
 import com.upgrad.FoodOrderingApp.service.entity.*;
+import com.upgrad.FoodOrderingApp.service.exception.ItemNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ItemService {
@@ -25,6 +23,15 @@ public class ItemService {
 
     @Autowired
     CategoryItemDao categoryItemDao;
+
+    @Autowired
+    ItemDao itemDao;
+
+    @Autowired
+    OrderDao orderDao;
+
+    @Autowired
+    OrderItemDao orderItemDao;
 
 
     public List<ItemEntity> getItemsByCategoryAndRestaurant(String restaurantUuid, String uuid) {
@@ -50,10 +57,65 @@ public class ItemService {
         return itemEntities;
     }
 
+
+    public ItemEntity getItemByUuid(String uuid) throws ItemNotFoundException {
+        ItemEntity itemEntity = itemDao.getItemByUuid(uuid);
+        if(Objects.isNull(itemEntity))
+            throw new ItemNotFoundException(ItemNotFoundErrorCode.INF_003);
+
+        return itemEntity;
+    }
+
+    private Map<String,Integer> sortMap(Map<String,Integer> map){
+        List<Map.Entry<String,Integer>> list = new LinkedList<Map.Entry<String, Integer>>(map.entrySet());
+
+        Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
+            @Override
+            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+                return (o2.getValue().compareTo(o1.getValue()));
+            }
+        });
+
+        Map<String, Integer> sortedByValueMap = new LinkedHashMap<String, Integer>();
+        for (Map.Entry<String, Integer> item : list) {
+            sortedByValueMap.put(item.getKey(), item.getValue());
+        }
+
+        return sortedByValueMap;
+    }
+
     public List<ItemEntity> getItemsByPopularity(RestaurantEntity restaurantEntity) {
 
-      //  List <OrdersEntity> ordersEntities = orderDao.getOrdersByRestaurant(restaurantEntity);
+        List <OrderEntity> ordersEntities = orderDao.getOrdersByRestaurant(restaurantEntity);
 
-    return null;
+        List <ItemEntity> itemEntities = new LinkedList<>();
+
+        ordersEntities.forEach(ordersEntity -> {
+            List <OrderItemEntity> orderItemEntities = orderItemDao.getItemsByOrders(ordersEntity);
+            orderItemEntities.forEach(orderItemEntity -> {
+                itemEntities.add(orderItemEntity.getItem());
+            });
+        });
+
+        Map<String,Integer> itemCountMap = new HashMap<String,Integer>();
+        itemEntities.forEach(itemEntity -> {
+            Integer count = itemCountMap.get(itemEntity.getUuid());
+            itemCountMap.put(itemEntity.getUuid(),(count == null) ? 1 : count+1);
+        });
+
+        Map<String,Integer> sortedItem = sortMap(itemCountMap);
+
+        List<ItemEntity> sortedItems = new LinkedList<>();
+        Integer count = 0;
+        for(Map.Entry<String,Integer> item:sortedItem.entrySet()){
+            if(count < 5) {
+                sortedItems.add(itemDao.getItemByUuid(item.getKey()));
+                count = count+1;
+            }else{
+                break;
+            }
+        }
+
+        return sortedItems;
     }
 }
