@@ -102,7 +102,8 @@ public class AddressService {
 
         CustomerAddressEntity customerAddressEntity = customerAddressDao.getCustomerAddressByAddress(addressEntity);
 
-        if(!(customerAddressEntity.getCustomer().getUuid() == customerEntity.getUuid()))
+        if(Objects.isNull(customerAddressEntity) ||
+                !(customerAddressEntity.getCustomer().getUuid() == customerEntity.getUuid()))
             throw new AuthorizationFailedException(AuthorizationErrorCode.ATHR_004);
 
         return addressEntity;

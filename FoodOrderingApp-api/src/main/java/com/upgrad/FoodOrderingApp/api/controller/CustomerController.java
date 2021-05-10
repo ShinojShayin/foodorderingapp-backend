@@ -114,7 +114,6 @@ public class CustomerController {
             throw new AuthorizationFailedException(AuthorizationErrorCode.ATHR_001);
 
         String accessToken = authorization.split("Bearer ")[1];
-
         CustomerAuthEntity customerAuthEntity = customerService.logout(accessToken);
 
         LogoutResponse logoutResponse = new LogoutResponse()
