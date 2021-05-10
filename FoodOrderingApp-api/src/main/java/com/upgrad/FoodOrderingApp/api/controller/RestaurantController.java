@@ -43,6 +43,11 @@ public class RestaurantController {
     @Autowired
     ItemService itemService;
 
+    /**
+     * This method will return the all restaurant available in the system
+     *
+     * @return
+     */
     @RequestMapping(method = RequestMethod.GET, path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<RestaurantListResponse> getAllRestaurants() {
 
@@ -83,6 +88,13 @@ public class RestaurantController {
         return new ResponseEntity<RestaurantListResponse>(restaurantListResponse, HttpStatus.OK);
     }
 
+    /**
+     * This method will help to search by restaurant name in the system any possible match will be listed in response
+     *
+     * @param restaurantName
+     * @return
+     * @throws RestaurantNotFoundException
+     */
     @RequestMapping(method = RequestMethod.GET, path = "/name/{restaurant_name}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<RestaurantListResponse> getRestaurantByName(
             @PathVariable(value = "restaurant_name") final String restaurantName)
@@ -127,6 +139,13 @@ public class RestaurantController {
         return new ResponseEntity<RestaurantListResponse>(restaurantListResponse, HttpStatus.OK);
     }
 
+    /**
+     * This method will return details of all restaurant under the given categoryid provided the request
+     *
+     * @param categoryId
+     * @return
+     * @throws CategoryNotFoundException
+     */
     @RequestMapping(method = RequestMethod.GET, path = "/category/{category_id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<RestaurantListResponse> getRestaurantByCategoryId(
             @PathVariable(value = "category_id") String categoryId) throws CategoryNotFoundException {
@@ -235,7 +254,7 @@ public class RestaurantController {
             @RequestParam(value = "customer_rating") final Double customerRating)
             throws AuthorizationFailedException, RestaurantNotFoundException, InvalidRatingException {
 
-        if(Objects.isNull(authorization) || !authorization.startsWith("Bearer "))
+        if (Objects.isNull(authorization) || !authorization.startsWith("Bearer "))
             throw new AuthorizationFailedException(AuthorizationErrorCode.ATHR_001);
 
         final String accessToken = authorization.split("Bearer ")[1];

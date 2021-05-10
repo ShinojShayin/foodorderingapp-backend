@@ -27,6 +27,14 @@ public class ItemController {
     @Autowired
     RestaurantService restaurantService;
 
+    /**
+     * This controller method will give top 5 food items based on the given restaurant id and orders in that restaurant.
+     * Incase if there is zero orders in the restaurant it will return default item list inside that restaurant
+     *
+     * @param restaurantUuid
+     * @return
+     * @throws RestaurantNotFoundException
+     */
     @RequestMapping(method = RequestMethod.GET, path = "/restaurant/{restaurant_id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ItemListResponse> getTopFiveItemsByPopularity(
             @PathVariable(value = "restaurant_id") final String restaurantUuid)

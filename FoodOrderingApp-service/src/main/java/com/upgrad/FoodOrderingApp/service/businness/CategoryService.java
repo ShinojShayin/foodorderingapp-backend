@@ -28,6 +28,12 @@ public class CategoryService {
     @Autowired
     CategoryDao categoryDao;
 
+    /**
+     * This method will return Category by Restaurant for given restaurant uuid
+     *
+     * @param uuid
+     * @return
+     */
     public List<CategoryEntity> getCategoriesByRestaurant(String uuid) {
         RestaurantEntity restaurantEntity = restaurantDao.getRestaurantByUuid(uuid);
         List<RestaurantCategoryEntity> restaurantCategoryEntities = restaurantCategoryDao.getCategoriesByRestaurant(restaurantEntity);
@@ -38,36 +44,53 @@ public class CategoryService {
         return categoryEntities;
     }
 
-    public String getCategoryAsString(List<CategoryEntity> categoryEntityList){
+    /**
+     * This method will convert list of category to category name string
+     *
+     * @param categoryEntityList
+     * @return
+     */
+    public String getCategoryAsString(List<CategoryEntity> categoryEntityList) {
 
         StringBuffer categories = new StringBuffer();
 
-        categoryEntityList.stream().forEach(value ->{
+        categoryEntityList.stream().forEach(value -> {
             categories.append(value.getCategoryName()).append(",");
         });
 
-        if(categories.length()>1){
-            return categories.substring(0, categories.length()-1);
-        }
-        else{
+        if (categories.length() > 1) {
+            return categories.substring(0, categories.length() - 1);
+        } else {
             return null;
         }
 
     }
 
 
+    /**
+     * This method will return all category
+     *
+     * @return
+     */
     public List<CategoryEntity> getAllCategoriesOrderedByName() {
         List<CategoryEntity> categoryEntities = categoryDao.getAllCategoriesOrderedByName();
         return categoryEntities;
     }
 
+    /**
+     * This method will return category by id
+     *
+     * @param categoryUuid
+     * @return
+     * @throws CategoryNotFoundException
+     */
     public CategoryEntity getCategoryById(String categoryUuid) throws CategoryNotFoundException {
-        if(StringUtils.isEmpty(categoryUuid))
+        if (StringUtils.isEmpty(categoryUuid))
             throw new CategoryNotFoundException(CategoryNotFoundErrorCode.CNF_001);
 
         CategoryEntity categoryEntity = categoryDao.getCategoryByUuid(categoryUuid);
 
-        if(Objects.isNull(categoryEntity))
+        if (Objects.isNull(categoryEntity))
             throw new CategoryNotFoundException(CategoryNotFoundErrorCode.CNF_002);
 
         return categoryEntity;

@@ -26,6 +26,11 @@ public class CategoryController {
     @Autowired
     CategoryService categoryService;
 
+    /**
+     * This controller should return the all the categories present in the system.
+     *
+     * @return CategoriesListResponse
+     */
     @RequestMapping(method = RequestMethod.GET, path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<CategoriesListResponse> getAllCategories() {
 
@@ -47,6 +52,14 @@ public class CategoryController {
         return new ResponseEntity<CategoriesListResponse>(categoriesListResponse, HttpStatus.OK);
     }
 
+    /**
+     * This controller will return the details of the categoryid along with all food items
+     * present under that category
+     *
+     * @param categoryUuid
+     * @return
+     * @throws CategoryNotFoundException
+     */
     @RequestMapping(method = RequestMethod.GET, path = "/{category_id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<CategoryDetailsResponse> getCategoryById(
             @PathVariable(value = "category_id") final String categoryUuid) throws CategoryNotFoundException {
@@ -71,6 +84,6 @@ public class CategoryController {
                 .categoryName(categoryEntity.getCategoryName())
                 .id(UUID.fromString(categoryEntity.getUuid()))
                 .itemList(itemLists);
-        return new ResponseEntity<CategoryDetailsResponse>(categoryDetailsResponse,HttpStatus.OK);
+        return new ResponseEntity<CategoryDetailsResponse>(categoryDetailsResponse, HttpStatus.OK);
     }
 }

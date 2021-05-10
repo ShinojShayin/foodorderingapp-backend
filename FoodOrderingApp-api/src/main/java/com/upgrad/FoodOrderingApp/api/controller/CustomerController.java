@@ -34,6 +34,13 @@ public class CustomerController {
     @Autowired
     CustomerService customerService;
 
+    /**
+     * This controller is used for signup or creating new customer in the system
+     *
+     * @param signupCustomerRequest
+     * @return
+     * @throws SignUpRestrictedException
+     */
     @RequestMapping(method = RequestMethod.POST, path = "/signup",
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -64,6 +71,16 @@ public class CustomerController {
         return new ResponseEntity<SignupCustomerResponse>(signupCustomerResponse, HttpStatus.CREATED);
     }
 
+    /**
+     * login method will login the user, for that user need to provide user name and password
+     * in following format "Basic username:password" where username:password of the String is encoded to Base64 format
+     * in the authorization header. This method will decode this string and extract username and password and
+     * pass it to service layer.
+     *
+     * @param authorization
+     * @return
+     * @throws AuthenticationFailedException
+     */
     @RequestMapping(method = RequestMethod.POST, path = "/login",
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<LoginResponse> loginCustomer(
@@ -71,18 +88,16 @@ public class CustomerController {
             throws AuthenticationFailedException {
 
         String[] credentials = null;
-        if(Objects.nonNull(authorization) && authorization.startsWith("Basic ")){
-            try{
+        if (Objects.nonNull(authorization) && authorization.startsWith("Basic ")) {
+            try {
                 String decodedAuthStr = new String(Base64.getDecoder().decode(authorization.split("Basic ")[1]));
                 credentials = decodedAuthStr.split(":");
-                if(credentials.length!=2)
+                if (credentials.length != 2)
                     throw new AuthenticationFailedException(AuthenticationErrorCode.ATH_003);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 throw new AuthenticationFailedException(AuthenticationErrorCode.ATH_003);
             }
-        }
-        else{
+        } else {
             throw new AuthenticationFailedException(AuthenticationErrorCode.ATH_003);
         }
 
@@ -107,10 +122,17 @@ public class CustomerController {
         return new ResponseEntity<LoginResponse>(loginResponse, headers, HttpStatus.OK);
     }
 
+    /**
+     * This method help to logout/signout user based accesstoken/authorization
+     *
+     * @param authorization
+     * @return
+     * @throws AuthorizationFailedException
+     */
     @RequestMapping(method = RequestMethod.POST, path = "/logout", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<LogoutResponse> logoutCustomer(@RequestHeader("authorization") final String authorization) throws AuthorizationFailedException {
 
-        if(Objects.isNull(authorization) || !authorization.startsWith("Bearer "))
+        if (Objects.isNull(authorization) || !authorization.startsWith("Bearer "))
             throw new AuthorizationFailedException(AuthorizationErrorCode.ATHR_001);
 
         String accessToken = authorization.split("Bearer ")[1];
@@ -122,6 +144,15 @@ public class CustomerController {
         return new ResponseEntity<LogoutResponse>(logoutResponse, HttpStatus.OK);
     }
 
+    /**
+     * This controller method will helps you to update user data, for valid accesstoken provided
+     *
+     * @param authorization
+     * @param updateCustomerRequest
+     * @return
+     * @throws AuthorizationFailedException
+     * @throws UpdateCustomerException
+     */
     @RequestMapping(method = RequestMethod.PUT, path = "",
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -130,10 +161,10 @@ public class CustomerController {
             @RequestBody(required = false) UpdateCustomerRequest updateCustomerRequest)
             throws AuthorizationFailedException, UpdateCustomerException {
 
-        if(StringUtils.isEmpty(updateCustomerRequest.getFirstName()))
+        if (StringUtils.isEmpty(updateCustomerRequest.getFirstName()))
             throw new UpdateCustomerException(UpdateCustomerErrorCode.UCR_002);
 
-        if(Objects.isNull(authorization) || !authorization.startsWith("Bearer "))
+        if (Objects.isNull(authorization) || !authorization.startsWith("Bearer "))
             throw new AuthorizationFailedException(AuthorizationErrorCode.ATHR_001);
 
         String accessToken = authorization.split("Bearer ")[1];
@@ -153,21 +184,29 @@ public class CustomerController {
         return new ResponseEntity<UpdateCustomerResponse>(updateCustomerResponse, HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.PUT,path = "/password",consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    /**
+     * This controller method helps to update user password based on the valid oldpassword and accesstoken provided
+     *
+     * @param authorization
+     * @param updatePasswordRequest
+     * @return
+     * @throws AuthorizationFailedException
+     * @throws UpdateCustomerException
+     */
+    @RequestMapping(method = RequestMethod.PUT, path = "/password", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<UpdatePasswordResponse> updateCustomerPassword(
-            @RequestHeader ("authorization") final String authorization,
+            @RequestHeader("authorization") final String authorization,
             @RequestBody(required = false) UpdatePasswordRequest updatePasswordRequest)
-            throws AuthorizationFailedException,UpdateCustomerException {
+            throws AuthorizationFailedException, UpdateCustomerException {
 
-        if(StringUtils.isEmpty(updatePasswordRequest.getOldPassword()) || StringUtils.isEmpty(updatePasswordRequest.getNewPassword()))
+        if (StringUtils.isEmpty(updatePasswordRequest.getOldPassword()) || StringUtils.isEmpty(updatePasswordRequest.getNewPassword()))
             throw new UpdateCustomerException(UpdateCustomerErrorCode.UCR_003);
 
-        if(Objects.isNull(authorization) || !authorization.startsWith("Bearer "))
+        if (Objects.isNull(authorization) || !authorization.startsWith("Bearer "))
             throw new AuthorizationFailedException(AuthorizationErrorCode.ATHR_001);
 
         String accessToken = authorization.split("Bearer ")[1];
         CustomerEntity loginCustomer = customerService.getCustomer(accessToken);
-
 
 
         CustomerEntity customerEntityResp = customerService.updateCustomerPassword(updatePasswordRequest.getOldPassword(),
@@ -177,8 +216,6 @@ public class CustomerController {
                 .id(customerEntityResp.getUuid())
                 .status("CUSTOMER PASSWORD UPDATED SUCCESSFULLY");
 
-        return new ResponseEntity<UpdatePasswordResponse>(updatePasswordResponse,HttpStatus.OK);
+        return new ResponseEntity<UpdatePasswordResponse>(updatePasswordResponse, HttpStatus.OK);
     }
-
-
 }

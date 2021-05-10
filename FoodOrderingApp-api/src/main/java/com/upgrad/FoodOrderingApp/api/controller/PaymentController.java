@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,8 +24,13 @@ public class PaymentController {
     @Autowired
     PaymentService paymentService;
 
-    @RequestMapping(method = RequestMethod.GET,path = "",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<PaymentListResponse> getAllPaymentMethods (){
+    /**
+     * This method returns all payment types available in the system
+     *
+     * @return
+     */
+    @RequestMapping(method = RequestMethod.GET, path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<PaymentListResponse> getAllPaymentMethods() {
 
         List<PaymentEntity> paymentEntities = paymentService.getAllPaymentMethods();
 

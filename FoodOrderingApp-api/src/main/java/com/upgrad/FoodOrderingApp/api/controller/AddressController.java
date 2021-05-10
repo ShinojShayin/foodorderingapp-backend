@@ -31,6 +31,16 @@ public class AddressController {
     @Autowired
     CustomerService customerService;
 
+    /**
+     * This controller method will save address submitted by user if provided token in valid
+     *
+     * @param authorization
+     * @param saveAddressRequest
+     * @return
+     * @throws AuthorizationFailedException
+     * @throws AddressNotFoundException
+     * @throws SaveAddressException
+     */
     @RequestMapping(method = RequestMethod.POST, path = "/address", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<SaveAddressResponse> saveAddress(@RequestHeader("authorization") final String authorization,
                                                            @RequestBody(required = false) SaveAddressRequest saveAddressRequest)
@@ -59,6 +69,13 @@ public class AddressController {
         return new ResponseEntity<SaveAddressResponse>(saveAddressResponse, HttpStatus.CREATED);
     }
 
+    /**
+     * This controller will load address currently loggedin user based on the token provided
+     *
+     * @param authorization
+     * @return
+     * @throws AuthorizationFailedException
+     */
     @RequestMapping(method = RequestMethod.GET, path = "/address/customer", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<AddressListResponse> getAllSavedAddress(@RequestHeader("authorization") final String authorization) throws AuthorizationFailedException {
 
@@ -86,6 +103,16 @@ public class AddressController {
         return new ResponseEntity<AddressListResponse>(addressListResponse, HttpStatus.OK);
     }
 
+    /**
+     * This controller will delete the address by addressid if the address belong to the loggin in user
+     * based on the token provided
+     *
+     * @param authorization
+     * @param addressUuid
+     * @return
+     * @throws AuthorizationFailedException
+     * @throws AddressNotFoundException
+     */
     @RequestMapping(method = RequestMethod.DELETE, path = "/address/{address_id}",
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<DeleteAddressResponse> deleteSavedAddress(@RequestHeader("authorization") final String authorization,
@@ -106,11 +133,16 @@ public class AddressController {
         return new ResponseEntity<DeleteAddressResponse>(deleteAddressResponse, HttpStatus.OK);
     }
 
+    /**
+     * This controller give list of all states available in the system
+     *
+     * @return
+     */
     @RequestMapping(method = RequestMethod.GET, path = "/states", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<StatesListResponse> getAllStates() {
         List<StateEntity> stateEntities = addressService.getAllStates();
         List<StatesList> statesLists = new LinkedList<>();
-        if(!stateEntities.isEmpty()) {
+        if (!stateEntities.isEmpty()) {
             stateEntities.forEach(stateEntity -> {
                 StatesList statesList = new StatesList()
                         .id(UUID.fromString(stateEntity.getUuid()))
@@ -120,6 +152,5 @@ public class AddressController {
         }
         StatesListResponse statesListResponse = new StatesListResponse().states(statesLists);
         return new ResponseEntity<StatesListResponse>(statesListResponse, HttpStatus.OK);
-
     }
 }

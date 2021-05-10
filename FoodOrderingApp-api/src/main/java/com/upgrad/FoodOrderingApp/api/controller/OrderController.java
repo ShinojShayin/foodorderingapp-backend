@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.util.*;
 
 
@@ -40,6 +39,15 @@ public class OrderController {
     @Autowired
     ItemService itemService;
 
+    /**
+     * This method give details of the coupon for provided coupon name along with accesstoken
+     *
+     * @param authorization
+     * @param couponName
+     * @return
+     * @throws AuthorizationFailedException
+     * @throws CouponNotFoundException
+     */
     @RequestMapping(method = RequestMethod.GET, path = "/coupon/{coupon_name}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<CouponDetailsResponse> getCouponByCouponName(@RequestHeader(value = "authorization") final String authorization, @PathVariable(value = "coupon_name") final String couponName) throws AuthorizationFailedException, CouponNotFoundException {
 
@@ -59,6 +67,13 @@ public class OrderController {
 
     }
 
+    /**
+     * This method will show the past order list of loggedin customer based on the accesstoken provided
+     *
+     * @param authorization
+     * @return
+     * @throws AuthorizationFailedException
+     */
     @RequestMapping(method = RequestMethod.GET, path = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<CustomerOrderResponse> getPastOrderOfUser(@RequestHeader(value = "authorization") final String authorization) throws AuthorizationFailedException {
 
@@ -107,7 +122,7 @@ public class OrderController {
 
                 OrderListCoupon orderListCoupon = null;
 
-                if(Objects.nonNull(orders.getCoupon())){
+                if (Objects.nonNull(orders.getCoupon())) {
                     orderListCoupon = new OrderListCoupon()
                             .couponName(orders.getCoupon().getCouponName())
                             .id(UUID.fromString(orders.getCoupon().getUuid()))
@@ -148,6 +163,19 @@ public class OrderController {
         return new ResponseEntity<CustomerOrderResponse>(customerOrderResponse, HttpStatus.OK);
     }
 
+    /**
+     * This method will helps to place order in a restaurant
+     *
+     * @param authorization
+     * @param saveOrderRequest
+     * @return
+     * @throws AuthorizationFailedException
+     * @throws PaymentMethodNotFoundException
+     * @throws AddressNotFoundException
+     * @throws RestaurantNotFoundException
+     * @throws CouponNotFoundException
+     * @throws ItemNotFoundException
+     */
     @RequestMapping(method = RequestMethod.POST, path = "",
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -165,7 +193,7 @@ public class OrderController {
 
         CouponEntity couponEntity = null;
 
-        if(Objects.nonNull(saveOrderRequest.getCouponId()))
+        if (Objects.nonNull(saveOrderRequest.getCouponId()))
             couponEntity = orderService.getCouponByCouponId(saveOrderRequest.getCouponId().toString());
 
         PaymentEntity paymentEntity = paymentService.getPaymentByUUID(saveOrderRequest.getPaymentId().toString());
@@ -186,7 +214,7 @@ public class OrderController {
         OrderEntity savedOrderEntity = orderService.saveOrder(orderEntity);
         List<ItemQuantity> itemQuantities = saveOrderRequest.getItemQuantities();
 
-        for (ItemQuantity itemQ: itemQuantities) {
+        for (ItemQuantity itemQ : itemQuantities) {
             ItemEntity itemEntity = itemService.getItemByUuid(itemQ.getItemId().toString());
             OrderItemEntity orderItemEntity = new OrderItemEntity();
             orderItemEntity.setItem(itemEntity);
@@ -200,11 +228,6 @@ public class OrderController {
         SaveOrderResponse saveOrderResponse = new SaveOrderResponse()
                 .id(savedOrderEntity.getUuid())
                 .status("ORDER SUCCESSFULLY PLACED");
-        return new ResponseEntity<SaveOrderResponse>(saveOrderResponse,HttpStatus.CREATED);
+        return new ResponseEntity<SaveOrderResponse>(saveOrderResponse, HttpStatus.CREATED);
     }
-
 }
-
-
-
-

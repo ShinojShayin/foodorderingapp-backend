@@ -36,23 +36,38 @@ public class AddressService {
     @Autowired
     AddressDao addressDao;
 
-    public StateEntity getStateByUUID (String uuid)throws AddressNotFoundException {
+    /**
+     * This return state object for given state uuid
+     *
+     * @param uuid
+     * @return
+     * @throws AddressNotFoundException
+     */
+    public StateEntity getStateByUUID(String uuid) throws AddressNotFoundException {
         StateEntity stateEntity = stateDao.getStateByUuid(uuid);
-        if(stateEntity == null)
+        if (stateEntity == null)
             throw new AddressNotFoundException(AddressNotFoundErrorCode.ANF_002);
 
-        return  stateEntity;
+        return stateEntity;
     }
 
+    /**
+     * This method will save address in the system
+     *
+     * @param addressEntity
+     * @param stateEntity
+     * @return
+     * @throws SaveAddressException
+     */
     @Transactional(propagation = Propagation.REQUIRED)
-    public AddressEntity saveAddress(AddressEntity addressEntity,StateEntity stateEntity)throws SaveAddressException {
+    public AddressEntity saveAddress(AddressEntity addressEntity, StateEntity stateEntity) throws SaveAddressException {
 
-        if ( StringUtils.isEmpty(addressEntity.getCity()) || StringUtils.isEmpty(addressEntity.getFlatBuilNo())
+        if (StringUtils.isEmpty(addressEntity.getCity()) || StringUtils.isEmpty(addressEntity.getFlatBuilNo())
                 || StringUtils.isEmpty(addressEntity.getPincode())
-                || StringUtils.isEmpty( addressEntity.getLocality()))
+                || StringUtils.isEmpty(addressEntity.getLocality()))
             throw new SaveAddressException(SaveAddressErrorCode.SAR_001);
 
-        if(!UtilityProvider.isPincodeValid(addressEntity.getPincode()))
+        if (!UtilityProvider.isPincodeValid(addressEntity.getPincode()))
             throw new SaveAddressException(SaveAddressErrorCode.SAR_002);
 
         addressEntity.setState(stateEntity);
@@ -64,8 +79,15 @@ public class AddressService {
 
     }
 
+    /**
+     * This method will save customer address mapping in the system
+     *
+     * @param customerEntity
+     * @param addressEntity
+     * @return
+     */
     @Transactional(propagation = Propagation.REQUIRED)
-    public CustomerAddressEntity saveCustomerAddressEntity(CustomerEntity customerEntity,AddressEntity addressEntity){
+    public CustomerAddressEntity saveCustomerAddressEntity(CustomerEntity customerEntity, AddressEntity addressEntity) {
 
         CustomerAddressEntity customerAddressEntity = new CustomerAddressEntity();
         customerAddressEntity.setCustomer(customerEntity);
@@ -76,13 +98,19 @@ public class AddressService {
 
     }
 
+    /**
+     * This method will return all address created by given customer
+     *
+     * @param customerEntity
+     * @return
+     */
     public List<AddressEntity> getAllAddress(CustomerEntity customerEntity) {
 
-        List<CustomerAddressEntity> customerAddressEntities  = customerAddressDao.getAllCustomerAddressByCustomer(customerEntity);
+        List<CustomerAddressEntity> customerAddressEntities = customerAddressDao.getAllCustomerAddressByCustomer(customerEntity);
 
         List<AddressEntity> addressEntities = new LinkedList<>();
-        if(Objects.nonNull(customerAddressEntities)){
-            customerAddressEntities.stream().forEach(obj->{
+        if (Objects.nonNull(customerAddressEntities)) {
+            customerAddressEntities.stream().forEach(obj -> {
                 addressEntities.add(obj.getAddress());
             });
         }
@@ -90,33 +118,51 @@ public class AddressService {
         return addressEntities;
     }
 
+    /**
+     * This method will return address object for given addressUuid
+     *
+     * @param addressUuid
+     * @param customerEntity
+     * @return
+     * @throws AddressNotFoundException
+     * @throws AuthorizationFailedException
+     */
     public AddressEntity getAddressByUUID(String addressUuid, CustomerEntity customerEntity) throws AddressNotFoundException, AuthorizationFailedException {
 
-        if(Objects.isNull(addressUuid))
+        if (Objects.isNull(addressUuid))
             throw new AddressNotFoundException(AddressNotFoundErrorCode.ANF_005);
 
         AddressEntity addressEntity = addressDao.getAddressByUuid(addressUuid);
 
-        if(Objects.isNull(addressEntity))
+        if (Objects.isNull(addressEntity))
             throw new AddressNotFoundException(AddressNotFoundErrorCode.ANF_003);
 
         CustomerAddressEntity customerAddressEntity = customerAddressDao.getCustomerAddressByAddress(addressEntity);
 
-        if(Objects.isNull(customerAddressEntity) ||
+        if (Objects.isNull(customerAddressEntity) ||
                 !(customerAddressEntity.getCustomer().getUuid() == customerEntity.getUuid()))
             throw new AuthorizationFailedException(AuthorizationErrorCode.ATHR_004);
 
         return addressEntity;
     }
 
+    /**
+     * This method will delete address from the system
+     *
+     * @param addressEntity
+     * @return
+     */
     @Transactional(propagation = Propagation.REQUIRED)
     public AddressEntity deleteAddress(AddressEntity addressEntity) {
-
         AddressEntity deletedAddressEntity = addressDao.deleteAddress(addressEntity);
         return deletedAddressEntity;
-
     }
 
+    /**
+     * This method will return all states avaialble in the system
+     *
+     * @return
+     */
     public List<StateEntity> getAllStates() {
         List<StateEntity> stateEntities = stateDao.getAllStates();
         return stateEntities;
