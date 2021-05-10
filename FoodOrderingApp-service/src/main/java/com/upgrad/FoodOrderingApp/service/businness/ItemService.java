@@ -105,17 +105,40 @@ public class ItemService {
 
         Map<String,Integer> sortedItem = sortMap(itemCountMap);
 
-        List<ItemEntity> sortedItems = new LinkedList<>();
+        List<ItemEntity> finalItemList = new LinkedList<>();
+        HashSet<String> itemNameList = new HashSet<>();
         Integer count = 0;
         for(Map.Entry<String,Integer> item:sortedItem.entrySet()){
             if(count < 5) {
-                sortedItems.add(itemDao.getItemByUuid(item.getKey()));
+                ItemEntity finalItem = itemDao.getItemByUuid(item.getKey());
+                itemNameList.add(finalItem.getItemName());
+                finalItemList.add(finalItem);
                 count = count+1;
             }else{
                 break;
             }
         }
 
-        return sortedItems;
+        if(count < 5){
+
+
+
+            List<RestaurantItemEntity> restaurantItemEntities = restaurantItemDao.getItemsByRestaurantWithLimit(
+                    restaurantEntity,
+                    (10-count));
+
+            for(RestaurantItemEntity restaurantItemEntity: restaurantItemEntities){
+                if(count < 5) {
+                    if(!itemNameList.contains(restaurantItemEntity.getItem().getItemName())){
+                        finalItemList.add(restaurantItemEntity.getItem());
+                        count = count+1;
+                    }
+                }else{
+                    break;
+                }
+            }
+        }
+
+        return finalItemList;
     }
 }

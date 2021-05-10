@@ -19,10 +19,24 @@ public class RestaurantItemDao {
     public List<RestaurantItemEntity> getItemsByRestaurant(RestaurantEntity restaurantEntity) {
         List<RestaurantItemEntity> restaurantItemEntities = null;
         try {
-            restaurantItemEntities = entityManager.createNamedQuery("getItemsByRestaurant",
+            restaurantItemEntities = entityManager.createNamedQuery("getItemsByRestaurantOrderByItemName",
                     RestaurantItemEntity.class).setParameter("restaurant",restaurantEntity).getResultList();
         }catch (NoResultException e){
            e.printStackTrace();
+        }
+        return restaurantItemEntities;
+    }
+
+    public List<RestaurantItemEntity> getItemsByRestaurantWithLimit(RestaurantEntity restaurantEntity, int limit) {
+        List<RestaurantItemEntity> restaurantItemEntities = null;
+        try {
+            restaurantItemEntities = entityManager.createNamedQuery("getItemsByRestaurant",
+                    RestaurantItemEntity.class)
+                    .setParameter("restaurant",restaurantEntity)
+                    .setMaxResults(limit)
+                    .getResultList();
+        }catch (NoResultException e){
+            e.printStackTrace();
         }
         return restaurantItemEntities;
     }

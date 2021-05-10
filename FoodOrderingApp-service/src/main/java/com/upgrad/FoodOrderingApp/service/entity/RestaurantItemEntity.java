@@ -9,9 +9,11 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "restaurant_item")
 @NamedQueries({
-        @NamedQuery(name = "getItemsByRestaurant",
+        @NamedQuery(name = "getItemsByRestaurantOrderByItemName",
                 query = "SELECT ri FROM RestaurantItemEntity ri WHERE ri.restaurant = :restaurant " +
                         "ORDER BY LOWER(ri.item.itemName) ASC "),
+        @NamedQuery(name = "getItemsByRestaurant",
+                query = "SELECT ri FROM RestaurantItemEntity ri WHERE ri.restaurant = :restaurant "),
 })
 public class RestaurantItemEntity {
     @Id

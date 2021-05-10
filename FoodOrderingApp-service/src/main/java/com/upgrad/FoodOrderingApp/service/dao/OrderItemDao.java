@@ -37,7 +37,7 @@ public class OrderItemDao {
         try{
            orderItemEntities = entityManager.createNamedQuery(
                    "getOrderItembyOrder", OrderItemEntity.class)
-                   .setParameter("ordersEntity",ordersEntity).getResultList();
+                   .setParameter("orders",ordersEntity).getResultList();
         }catch (NoResultException e) {
             e.printStackTrace();
         }

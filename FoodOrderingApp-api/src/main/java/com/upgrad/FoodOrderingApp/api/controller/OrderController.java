@@ -105,10 +105,15 @@ public class OrderController {
                         .pincode(orders.getAddress().getPincode())
                         .state(orderListAddressState);
 
-                OrderListCoupon orderListCoupon = new OrderListCoupon()
-                        .couponName(orders.getCoupon().getCouponName())
-                        .id(UUID.fromString(orders.getCoupon().getUuid()))
-                        .percent(orders.getCoupon().getPercent());
+                OrderListCoupon orderListCoupon = null;
+
+                if(Objects.nonNull(orders.getCoupon())){
+                    orderListCoupon = new OrderListCoupon()
+                            .couponName(orders.getCoupon().getCouponName())
+                            .id(UUID.fromString(orders.getCoupon().getUuid()))
+                            .percent(orders.getCoupon().getPercent());
+                }
+
 
                 OrderListCustomer orderListCustomer = new OrderListCustomer()
                         .id(UUID.fromString(orders.getCustomer().getUuid()))
