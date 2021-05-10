@@ -17,39 +17,51 @@ public class CustomerAddressDao {
     private EntityManager entityManager;
 
     /**
-     *
+     * Saves customer address relationship in database
      *
      * @param customerAddressEntity
      * @return
      */
-    public CustomerAddressEntity saveCustomerAddress(CustomerAddressEntity customerAddressEntity){
+    public CustomerAddressEntity saveCustomerAddress(CustomerAddressEntity customerAddressEntity) {
         entityManager.persist(customerAddressEntity);
         return customerAddressEntity;
     }
 
+    /**
+     * This method fetch customer address relationship data
+     *
+     * @param customerEntity
+     * @return
+     */
     public List<CustomerAddressEntity> getAllCustomerAddressByCustomer(CustomerEntity customerEntity) {
-        List <CustomerAddressEntity> customerAddressEntities = null;
-        try{
+        List<CustomerAddressEntity> customerAddressEntities = null;
+        try {
 
             customerAddressEntities = entityManager.createNamedQuery("getAllCustomerAddressByCustomer",
                     CustomerAddressEntity.class)
-                    .setParameter("customer_entity",customerEntity)
+                    .setParameter("customer_entity", customerEntity)
                     .getResultList();
 
-        }catch (NoResultException e){
+        } catch (NoResultException e) {
             e.printStackTrace();
         }
         return customerAddressEntities;
     }
 
-    public CustomerAddressEntity getCustomerAddressByAddress(AddressEntity addressEntity){
+    /**
+     * This method fetch customer address relationship data
+     *
+     * @param addressEntity
+     * @return
+     */
+    public CustomerAddressEntity getCustomerAddressByAddress(AddressEntity addressEntity) {
         CustomerAddressEntity customerAddressEntity = null;
         try {
-             customerAddressEntity = entityManager.createNamedQuery("getCustomerAddressByAddress",CustomerAddressEntity.class)
-                     .setParameter("address_entity",addressEntity)
-                     .getSingleResult();
-        }catch (NoResultException e){
-           e.printStackTrace();
+            customerAddressEntity = entityManager.createNamedQuery("getCustomerAddressByAddress", CustomerAddressEntity.class)
+                    .setParameter("address_entity", addressEntity)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            e.printStackTrace();
         }
         return customerAddressEntity;
     }

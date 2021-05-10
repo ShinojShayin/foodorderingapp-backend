@@ -16,24 +16,36 @@ public class RestaurantCategoryDao {
     @PersistenceContext
     private EntityManager entityManager;
 
+    /**
+     * This method fetch restaurant category details by restaurant
+     *
+     * @param restaurantEntity
+     * @return
+     */
     public List<RestaurantCategoryEntity> getCategoriesByRestaurant(RestaurantEntity restaurantEntity) {
         List<RestaurantCategoryEntity> restaurantCategoryEntity = null;
         try {
             restaurantCategoryEntity = entityManager.createNamedQuery(
-                    "getCategoriesByRestaurant",RestaurantCategoryEntity.class)
-                    .setParameter("restaurant",restaurantEntity).getResultList();
+                    "getCategoriesByRestaurant", RestaurantCategoryEntity.class)
+                    .setParameter("restaurant", restaurantEntity).getResultList();
 
-        }catch (NoResultException e){
-           e.printStackTrace();
+        } catch (NoResultException e) {
+            e.printStackTrace();
         }
         return restaurantCategoryEntity;
     }
 
+    /**
+     * This method fetch restaurant category details by category
+     *
+     * @param categoryEntity
+     * @return
+     */
     public List<RestaurantCategoryEntity> getRestaurantByCategory(CategoryEntity categoryEntity) {
         List<RestaurantCategoryEntity> restaurantCategoryEntities = null;
         try {
-            restaurantCategoryEntities = entityManager.createNamedQuery("getRestaurantByCategory",RestaurantCategoryEntity.class).setParameter("category",categoryEntity).getResultList();
-        }catch (NoResultException e){
+            restaurantCategoryEntities = entityManager.createNamedQuery("getRestaurantByCategory", RestaurantCategoryEntity.class).setParameter("category", categoryEntity).getResultList();
+        } catch (NoResultException e) {
             e.printStackTrace();
         }
         return restaurantCategoryEntities;

@@ -15,6 +15,12 @@ public class OrderItemDao {
     @PersistenceContext
     private EntityManager entityManager;
 
+    /**
+     * This method get orderitem list
+     *
+     * @param orderEntity
+     * @return
+     */
     public List<OrderItemEntity> getOrderItemsByOrder(OrderEntity orderEntity) {
         try {
             List<OrderItemEntity> orderItemEntities = entityManager.createNamedQuery(
@@ -27,11 +33,23 @@ public class OrderItemDao {
         }
     }
 
+    /**
+     * Save orderitem in database
+     *
+     * @param orderItemEntity
+     * @return
+     */
     public OrderItemEntity saveOrderItem(OrderItemEntity orderItemEntity) {
         entityManager.persist(orderItemEntity);
         return orderItemEntity;
     }
 
+    /**
+     * Fetch items by order
+     *
+     * @param ordersEntity
+     * @return
+     */
     public List<OrderItemEntity> getItemsByOrders(OrderEntity ordersEntity) {
         List<OrderItemEntity> orderItemEntities = null;
         try{

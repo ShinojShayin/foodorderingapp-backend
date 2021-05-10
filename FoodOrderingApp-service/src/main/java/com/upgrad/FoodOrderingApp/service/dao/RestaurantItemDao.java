@@ -15,27 +15,39 @@ public class RestaurantItemDao {
     @PersistenceContext
     private EntityManager entityManager;
 
-
+    /**
+     * This method fetch restaurant item relationship by restaurant entity
+     *
+     * @param restaurantEntity
+     * @return
+     */
     public List<RestaurantItemEntity> getItemsByRestaurant(RestaurantEntity restaurantEntity) {
         List<RestaurantItemEntity> restaurantItemEntities = null;
         try {
             restaurantItemEntities = entityManager.createNamedQuery("getItemsByRestaurantOrderByItemName",
-                    RestaurantItemEntity.class).setParameter("restaurant",restaurantEntity).getResultList();
-        }catch (NoResultException e){
-           e.printStackTrace();
+                    RestaurantItemEntity.class).setParameter("restaurant", restaurantEntity).getResultList();
+        } catch (NoResultException e) {
+            e.printStackTrace();
         }
         return restaurantItemEntities;
     }
 
+    /**
+     * This method restaurant items available in restaurant based on limit provided
+     *
+     * @param restaurantEntity
+     * @param limit
+     * @return
+     */
     public List<RestaurantItemEntity> getItemsByRestaurantWithLimit(RestaurantEntity restaurantEntity, int limit) {
         List<RestaurantItemEntity> restaurantItemEntities = null;
         try {
             restaurantItemEntities = entityManager.createNamedQuery("getItemsByRestaurant",
                     RestaurantItemEntity.class)
-                    .setParameter("restaurant",restaurantEntity)
+                    .setParameter("restaurant", restaurantEntity)
                     .setMaxResults(limit)
                     .getResultList();
-        }catch (NoResultException e){
+        } catch (NoResultException e) {
             e.printStackTrace();
         }
         return restaurantItemEntities;

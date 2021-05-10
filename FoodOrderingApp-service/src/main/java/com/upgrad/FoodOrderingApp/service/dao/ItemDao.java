@@ -13,14 +13,20 @@ public class ItemDao {
     @PersistenceContext
     private EntityManager entityManager;
 
+    /**
+     * This method fetch item by uuid
+     *
+     * @param uuid
+     * @return
+     */
     public ItemEntity getItemByUuid(String uuid) {
         ItemEntity itemEntity = null;
         try {
             itemEntity = entityManager.createNamedQuery(
-                    "getItemByUUID",ItemEntity.class)
-                    .setParameter("uuid",uuid)
+                    "getItemByUUID", ItemEntity.class)
+                    .setParameter("uuid", uuid)
                     .getSingleResult();
-        }catch (NoResultException e){
+        } catch (NoResultException e) {
             e.printStackTrace();
         }
         return itemEntity;

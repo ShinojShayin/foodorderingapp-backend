@@ -15,21 +15,32 @@ public class PaymentDao {
     private EntityManager entityManager;
 
 
-
+    /**
+     * This method fetch payment details by uuid
+     *
+     * @param paymentId
+     * @return
+     */
     public PaymentEntity getPaymentByUUID(String paymentId) {
-        try{
-            PaymentEntity paymentEntity = entityManager.createNamedQuery("getPaymentByUUID",PaymentEntity.class).setParameter("uuid",paymentId).getSingleResult();
+        try {
+            PaymentEntity paymentEntity = entityManager.createNamedQuery("getPaymentByUUID", PaymentEntity.class)
+                    .setParameter("uuid", paymentId).getSingleResult();
             return paymentEntity;
-        }catch (NoResultException nre){
+        } catch (NoResultException nre) {
             return null;
         }
     }
 
+    /**
+     * This method fetch all payment methods from database
+     *
+     * @return
+     */
     public List<PaymentEntity> getAllPaymentMethods() {
         try {
-            List<PaymentEntity> paymentEntities =entityManager.createNamedQuery("getAllPaymentMethods", PaymentEntity.class).getResultList();
+            List<PaymentEntity> paymentEntities = entityManager.createNamedQuery("getAllPaymentMethods", PaymentEntity.class).getResultList();
             return paymentEntities;
-        }catch (NoResultException nre){
+        } catch (NoResultException nre) {
             return null;
         }
     }

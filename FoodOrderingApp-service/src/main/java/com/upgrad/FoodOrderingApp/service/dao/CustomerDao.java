@@ -13,36 +13,60 @@ public class CustomerDao {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public CustomerEntity getCustomerByContactNumber (final String contact_number){
+    /**
+     * This method fetch customer object based on contactnumber
+     *
+     * @param contact_number
+     * @return
+     */
+    public CustomerEntity getCustomerByContactNumber(final String contact_number) {
         CustomerEntity customer = null;
-        try{
-            customer = entityManager.createNamedQuery("customerByContactNumber",CustomerEntity.class)
-                    .setParameter("contact_number",contact_number).getSingleResult();
+        try {
+            customer = entityManager.createNamedQuery("customerByContactNumber", CustomerEntity.class)
+                    .setParameter("contact_number", contact_number).getSingleResult();
 
-        }catch (NoResultException e){
-           e.printStackTrace();
+        } catch (NoResultException e) {
+            e.printStackTrace();
         }
 
         return customer;
     }
 
-    public CustomerEntity createCustomer(CustomerEntity customerEntity){
+    /**
+     * This method save customer object in table
+     *
+     * @param customerEntity
+     * @return
+     */
+    public CustomerEntity createCustomer(CustomerEntity customerEntity) {
         entityManager.persist(customerEntity);
         return customerEntity;
     }
 
-    public CustomerEntity getCustomerByUuid (final String uuid){
+    /**
+     * This method fetch customer object based on uuid
+     *
+     * @param uuid
+     * @return
+     */
+    public CustomerEntity getCustomerByUuid(final String uuid) {
         CustomerEntity customer = null;
         try {
-            customer = entityManager.createNamedQuery("customerByUuid",CustomerEntity.class).setParameter("uuid",uuid).getSingleResult();
+            customer = entityManager.createNamedQuery("customerByUuid", CustomerEntity.class).setParameter("uuid", uuid).getSingleResult();
 
-        }catch (NoResultException e){
-           e.printStackTrace();
+        } catch (NoResultException e) {
+            e.printStackTrace();
         }
         return customer;
     }
 
-    public CustomerEntity updateCustomer(CustomerEntity customer){
+    /**
+     * This method update customer table in database
+     *
+     * @param customer
+     * @return
+     */
+    public CustomerEntity updateCustomer(CustomerEntity customer) {
         entityManager.merge(customer);
         return customer;
     }

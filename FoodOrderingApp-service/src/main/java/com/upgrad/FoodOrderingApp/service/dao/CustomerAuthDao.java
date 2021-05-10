@@ -13,16 +13,33 @@ public class CustomerAuthDao {
     @PersistenceContext
     private EntityManager entityManager;
 
+    /**
+     * This method save token to customerauth table
+     *
+     * @param customerAuthEntity
+     * @return
+     */
     public CustomerAuthEntity createCustomerAuth(CustomerAuthEntity customerAuthEntity){
         entityManager.persist(customerAuthEntity);
         return customerAuthEntity;
     }
 
+    /**
+     * This method update customerauth table
+     *
+     * @param customerAuthEntity
+     * @return
+     */
     public CustomerAuthEntity updateCustomerAuth(CustomerAuthEntity customerAuthEntity){
         entityManager.merge(customerAuthEntity);
         return customerAuthEntity;
     }
 
+    /**
+     * This method customer auth table based on accesstoken
+     * @param accessToken
+     * @return
+     */
     public CustomerAuthEntity getCustomerAuthByAccessToken(String accessToken){
         try{
             CustomerAuthEntity customerAuthEntity = entityManager.createNamedQuery("getCustomerAuthByAccessToken",CustomerAuthEntity.class).setParameter("access_Token",accessToken).getSingleResult();

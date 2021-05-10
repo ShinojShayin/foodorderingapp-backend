@@ -14,6 +14,12 @@ public class StateDao {
     @PersistenceContext
     private EntityManager entityManager;
 
+    /**
+     * This method return state object by state uuid
+     *
+     * @param uuid
+     * @return
+     */
     public StateEntity getStateByUuid(String uuid){
         StateEntity stateEntity = null;
         try{
@@ -25,6 +31,11 @@ public class StateDao {
         return stateEntity;
     }
 
+    /**
+     * This method return all state available in the system
+     * 
+     * @return
+     */
     public List<StateEntity> getAllStates(){
         List<StateEntity> stateEntities = null;
         try {
