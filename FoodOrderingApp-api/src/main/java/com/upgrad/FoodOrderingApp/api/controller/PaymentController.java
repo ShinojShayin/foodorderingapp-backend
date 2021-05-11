@@ -16,9 +16,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/payment")
-
 public class PaymentController {
 
     @Autowired
